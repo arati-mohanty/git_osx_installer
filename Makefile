@@ -4,8 +4,8 @@ C_INCLUDE_PATH := /usr/include
 CPLUS_INCLUDE_PATH := /usr/include
 LD_LIBRARY_PATH := /usr/lib
 
-OSX_VERSION := 10.6
-SDK_PATH := $(shell bin/find-dir  $(PWD)/MacOSX10.9.sdk /Developer/SDKs/MacOSX$(OSX_VERSION).sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(OSX_VERSION).sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform)
+OSX_VERSION := 12.0
+SDK_PATH := $(shell bin/find-dir /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk)
 TARGET_FLAGS := -mmacosx-version-min=$(OSX_VERSION) -isysroot $(SDK_PATH) -DMACOSX_DEPLOYMENT_TARGET=$(OSX_VERSION)
 
 ifeq ("$(OSX_VERSION)", "10.6")
@@ -26,6 +26,10 @@ endif
 ifeq ("$(OSX_VERSION)", "10.11")
 OSX_NAME := El Capitan
 endif
+ifeq ("$(OSX_VERSION)", "12.0")
+OSX_NAME := Monterey
+endif
+
 
 OSX_CODE := $(shell echo "$(OSX_NAME)" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
 
@@ -139,11 +143,11 @@ $(BUILD_DIR)/git-$(VERSION)/osx-installed-bin: $(BUILD_DIR)/git-$(VERSION)/osx-b
 	cp $(BUILD_DIR)/git-$(VERSION)/contrib/completion/git-prompt.sh $(DESTDIR)$(GIT_PREFIX)/contrib/completion/
 	# This is needed for Git-Gui, GitK
 	mkdir -p $(DESTDIR)$(GIT_PREFIX)/lib/perl5/site_perl
-	[ ! -f $(DESTDIR)$(GIT_PREFIX)/lib/perl5/site_perl/Error.pm ] && cp $(BUILD_DIR)/git-$(VERSION)/perl/private-Error.pm $(DESTDIR)$(GIT_PREFIX)/lib/perl5/site_perl/Error.pm || echo done
+	[ ! -f $(DESTDIR)$(GIT_PREFIX)/lib/perl5/site_perl/Error.pm ] && cp $(BUILD_DIR)/git-$(VERSION)/perl/FromCPAN/Error.pm $(DESTDIR)$(GIT_PREFIX)/lib/perl5/site_perl/Error.pm || echo done
 	touch $@
 
 $(BUILD_DIR)/git-$(VERSION)/osx-installed-man: build/git-manpages-$(VERSION).tar.gz $(BUILD_DIR)/git-$(VERSION)/osx-installed-bin
-	tar xzfo build/git-manpages-$(VERSION).tar.gz -C $(DESTDIR)$(GIT_PREFIX)/share/man
+	mkdir -p $(DESTDIR)$(GIT_PREFIX)/share/man && tar xzfo build/git-manpages-$(VERSION).tar.gz -C $(DESTDIR)$(GIT_PREFIX)/share/man
 	touch $@
 
 $(BUILD_DIR)/git-$(VERSION)/osx-installed: $(BUILD_DIR)/git-$(VERSION)/osx-installed-bin $(BUILD_DIR)/git-$(VERSION)/osx-installed-man $(BUILD_DIR)/git-$(VERSION)/osx-installed-assets $(BUILD_DIR)/git-$(VERSION)/osx-installed-subtree

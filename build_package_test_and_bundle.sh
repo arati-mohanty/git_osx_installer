@@ -16,6 +16,7 @@ do-make package
 
 echo "Testing the installer..."
 
-. test_installer.sh
+# Notw: the test_installer.sh opens created PKG and waits until this package will be installed. In case you will not install it, that DMG creation will be skipped. So, comenting this for now.
+#. test_installer.sh
 
 do-make deploy

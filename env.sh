@@ -10,6 +10,6 @@ function current-git-version() {
 }
 
 function do-make() {
-  make OSX_VERSION=${OSX_VERSION:-10.9} VERSION=${GIT_VERSION:-$(current-git-version)} "${@}"
+  make OSX_VERSION=${OSX_VERSION:-12.0} VERSION=${GIT_VERSION:-$(current-git-version)} "${@}"
 }
 
