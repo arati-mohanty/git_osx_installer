@@ -35,7 +35,7 @@ OSX_CODE := $(shell echo "$(OSX_NAME)" | tr '[:upper:]' '[:lower:]' | tr ' ' '-'
 
 ARCH := Universal
 ARCH_CODE := universal
-ARCH_FLAGS_universal := -arch x86_64
+ARCH_FLAGS_universal := -arch x86_64 -arch arm64
 ARCH_FLAGS_x86_64 := -arch x86_64
 
 CFLAGS := $(TARGET_FLAGS) $(ARCH_FLAGS_${ARCH_CODE})
@@ -47,9 +47,9 @@ GIT_PREFIX := $(PREFIX)/git
 
 DOWNLOAD_LOCATION=https://www.kernel.org/pub/software/scm/git
 
-XML_CATALOG_FILES=$(shell bin/find-file /usr/local/etc/xml/catalog)
+XML_CATALOG_FILES=$(shell bin/find-file /opt/homebrew/etc/xml/catalog)
 
-BUILD_CODE := intel-$(ARCH_CODE)-$(OSX_CODE)
+BUILD_CODE := M1-$(ARCH_CODE)-$(OSX_CODE)
 BUILD_DIR := build/$(BUILD_CODE)
 DESTDIR := $(PWD)/stage/git-$(BUILD_CODE)-$(VERSION)
 SUBMAKE := $(MAKE) C_INCLUDE_PATH="$(C_INCLUDE_PATH)" CPLUS_INCLUDE_PATH="$(CPLUS_INCLUDE_PATH)" LD_LIBRARY_PATH="$(LD_LIBRARY_PATH)" TARGET_FLAGS="$(TARGET_FLAGS)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" NO_GETTEXT=1 NO_DARWIN_PORTS=1 prefix=$(GIT_PREFIX) DESTDIR=$(DESTDIR)
@@ -74,7 +74,7 @@ vars:
 
 .SECONDARY:
 
-/usr/local/etc/xml/catalog:
+/opt/homebrew/etc/xml/catalog:
 	brew install docbook
 
 /usr/local/bin/xmlto:
@@ -84,8 +84,8 @@ vars:
 	brew install asciidoc
 
 
-tmp/setup-verified: /usr/local/etc/xml/catalog /usr/local/bin/xmlto /usr/local/bin/asciidoc
-	grep -q docbook-xsl /usr/local/etc/xml/catalog && exit 0 || (echo "You need docbook-xsl installed to build docs; If it is already installed, uninstall and reinstall it"; brew install docbook-xsl)
+tmp/setup-verified: /opt/homebrew/etc/xml/catalog /usr/local/bin/xmlto /usr/local/bin/asciidoc
+	grep -q docbook-xsl /opt/homebrew/etc/xml/catalog && exit 0 || (echo "You need docbook-xsl installed to build docs; If it is already installed, uninstall and reinstall it"; brew install docbook-xsl)
 	touch	$@
 
 setup: tmp/setup-verified
